@@ -3,6 +3,7 @@ import { StatusBar } from "expo-status-bar";
 import { PaperProvider, MD3LightTheme } from "react-native-paper";
 import { SQLiteProvider } from "expo-sqlite";
 import { migrateDbIfNeeded } from "@/database";
+import { View } from "react-native";
 
 const theme = {
   ...MD3LightTheme,
@@ -15,18 +16,27 @@ const theme = {
 
 export default function RootLayout() {
   return (
-    <SQLiteProvider databaseName="data.db" onInit={migrateDbIfNeeded}>
-      <PaperProvider theme={theme}>
-        <StatusBar style="light" backgroundColor={"#232528"} />
-        <Stack
-          screenOptions={{
-            headerShown: false,
-            contentStyle: {
-              backgroundColor: theme.colors.background,
-            },
-          }}
-        />
-      </PaperProvider>
-    </SQLiteProvider>
+    <View style={{ flex: 1, backgroundColor: "#232528" }}>
+      <SQLiteProvider databaseName="data.db" onInit={migrateDbIfNeeded}>
+        <PaperProvider theme={theme}>
+          <StatusBar style="light" backgroundColor={"#232528"} />
+          <Stack
+            screenOptions={{
+              headerShown: false,
+              contentStyle: {
+                backgroundColor: "#232528",
+              },
+              animation: "fade",
+              animationDuration: 200,
+              presentation: "modal",
+              cardOverlayEnabled: true,
+              cardStyle: {
+                backgroundColor: "#232528",
+              },
+            }}
+          />
+        </PaperProvider>
+      </SQLiteProvider>
+    </View>
   );
 }

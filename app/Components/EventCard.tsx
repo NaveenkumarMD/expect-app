@@ -29,7 +29,7 @@ interface EventCardProps {
 }
 
 const EventCard: React.FC<EventCardProps> = ({ data, pastEvent }) => {
-  const dateObj: Date = new Date(data.created_at);
+  const dateObj: Date = new Date(data.expected_at);
   const dateString: string = moment(dateObj).format("ddd, Do MMM");
   const timeString: string = moment(dateObj).format("h:mm A");
 

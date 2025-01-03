@@ -1,6 +1,24 @@
 import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
+  grid: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "center",
+    gap: 4,
+  },
+  timeContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  text1: {
+    color: "#F1F4F6",
+    fontSize: 14,
+    fontWeight: "semibold",
+    fontFamily: '"Open Sans", sans-serif',
+  },
   container: {
     backgroundColor: "#232528",
     paddingTop: 40,

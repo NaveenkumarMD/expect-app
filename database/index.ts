@@ -114,6 +114,42 @@ async function archiveExpectation(
   );
 }
 
+async function importData(db: SQLite.SQLiteDatabase, data: Expectation[]) {
+  try {
+    // Start a transaction for bulk insert
+    await db.withTransactionAsync(async () => {
+      for (const expectation of data) {
+        await db.runAsync(
+          `INSERT INTO expectations (
+            title,
+            options,
+            created_at,
+            expected_at,
+            result,
+            isDisappointed,
+            resultPercentage,
+            archived
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+          [
+            expectation.title,
+            expectation.options,
+            expectation.created_at,
+            expectation.expected_at,
+            expectation.result || null,
+            expectation.isDisappointed || false,
+            expectation.resultPercentage || null,
+            expectation.archived || false,
+          ]
+        );
+      }
+    });
+    return true;
+  } catch (error) {
+    console.error("Import error:", error);
+    throw error;
+  }
+}
+
 const dbUtils = {
   getAllExpectations,
   getExpectationWithTitle,
@@ -123,6 +159,7 @@ const dbUtils = {
   addNewExpectation,
   cleartables,
   archiveExpectation,
+  importData,
 };
 
 export { migrateDbIfNeeded, dbUtils };

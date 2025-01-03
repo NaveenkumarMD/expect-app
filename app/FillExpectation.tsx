@@ -14,6 +14,9 @@ import { useSQLiteContext } from "expo-sqlite";
 import { Expectation } from "@/Types/index.types";
 import { optionsUtils } from "@/utils";
 import Icon from "@expo/vector-icons/Entypo";
+import FeatherIcon from "react-native-vector-icons/Feather";
+import MaterialIcon from "react-native-vector-icons/MaterialCommunityIcons";
+import moment from "moment";
 
 const UpdateExpectation = () => {
   const { id } = useLocalSearchParams();
@@ -55,6 +58,7 @@ const UpdateExpectation = () => {
         return;
       }
       await dbUtils.archiveExpectation(db, expectation, true);
+      router.replace("/Home");
     } catch (error) {
       console.log(error);
     }
@@ -71,6 +75,18 @@ const UpdateExpectation = () => {
       console.log(error);
     }
   }
+  let timeStringExpected: string = "";
+  let dateStringExpected: string = "";
+  let timeStringCreated: string = "";
+  let dateStringCreated: string = "";
+  if (expectation) {
+    const dateObj: Date = new Date(expectation.expected_at);
+    dateStringExpected = moment(dateObj).format("ddd, Do MMM");
+    timeStringExpected = moment(dateObj).format("h:mm A");
+    const dateObjCreated: Date = new Date(expectation.created_at);
+    dateStringCreated = moment(dateObjCreated).format("ddd, Do MMM");
+    timeStringCreated = moment(dateObjCreated).format("h:mm A");
+  }
 
   return (
     <View style={styles.container}>
@@ -81,6 +97,7 @@ const UpdateExpectation = () => {
         <View>
           <View>
             {options.map((option, id) => {
+              if (!option) return;
               return (
                 <TouchableHighlight
                   key={option}
@@ -110,6 +127,32 @@ const UpdateExpectation = () => {
                 setUnExpected(value);
               }}
             />
+          </View>
+          <View style={{ marginTop: 16 }}>
+            <Text style={styles.heading1}>Expected at</Text>
+            <View style={{ ...styles.timeContainer, marginTop: 8 }}>
+              <View style={{ ...styles.grid, marginRight: 32 }}>
+                <FeatherIcon name="calendar" color="#7D8A95" />
+                <Text style={styles.text1}>{dateStringExpected}</Text>
+              </View>
+              <View style={styles.grid}>
+                <MaterialIcon name="clock-time-three-outline" color="#7D8A95" />
+                <Text style={styles.text1}>{timeStringExpected}</Text>
+              </View>
+            </View>
+          </View>
+          <View style={{ marginTop: 16 }}>
+            <Text style={styles.heading1}> Created at</Text>
+            <View style={{ ...styles.timeContainer, marginTop: 8 }}>
+              <View style={{ ...styles.grid, marginRight: 32 }}>
+                <FeatherIcon name="calendar" color="#7D8A95" />
+                <Text style={styles.text1}>{dateStringCreated}</Text>
+              </View>
+              <View style={styles.grid}>
+                <MaterialIcon name="clock-time-three-outline" color="#7D8A95" />
+                <Text style={styles.text1}>{timeStringCreated}</Text>
+              </View>
+            </View>
           </View>
           {!pastEvent && (
             <Button

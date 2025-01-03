@@ -1,6 +1,19 @@
 import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
+  noEvents: {
+    width: "100%",
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 20,
+  },
+  noEventsText: {
+    fontSize: 18,
+    fontFamily: '"Open Sans", sans-serif',
+    color: "#7D8A95",
+    fontWeight: "400",
+  },
   fab: {
     position: "absolute",
     margin: 24,

@@ -3,8 +3,8 @@ import { Expectation } from "@/Types/index.types";
 import { useSQLiteContext } from "expo-sqlite";
 import { useEffect, useState } from "react";
 import { View, StyleSheet, Text } from "react-native";
-import CircularProgress from "react-native-circular-progress-indicator";
-import { CircularProgressBase } from "react-native-circular-progress-indicator";
+import { AnimatedCircularProgress } from "react-native-circular-progress";
+
 const styles = StyleSheet.create({
   container: {
     width: "100%",
@@ -67,7 +67,7 @@ interface result {
   percentage: number;
   expectedResult: number;
 }
-const defaultResult = {
+const defaultResult: result = {
   disappointmentCount: 0,
   total: 0,
   percentage: 0,
@@ -78,10 +78,7 @@ const MainInfoCard = () => {
   const db = useSQLiteContext();
   const [expectations, setExpectations] = useState<Expectation[]>();
   const [result, setResult] = useState<result>(defaultResult);
-  const data = {
-    labels: ["Swim", "Bike", "Run"], // optional
-    data: [0.4, 0.6, 0.8],
-  };
+
   async function fetchData() {
     const data = await dbUtils.getAllExpectations(db);
     if (!data) return;
@@ -110,19 +107,18 @@ const MainInfoCard = () => {
   useEffect(() => {
     fetchData();
   }, []);
+
   return (
     <View style={styles.container}>
       <View style={styles.loaderContainer}>
-        <CircularProgress
-          value={result.percentage * 100}
-          radius={50}
-          inActiveStrokeColor={"#fff"}
-          inActiveStrokeOpacity={0.15}
-          progressValueColor={"#fff"}
-          activeStrokeWidth={8}
-          activeStrokeColor="white"
-          valueSuffix={"%"}
-        />
+        {/* <AnimatedCircularProgress
+          size={100}
+          width={10}
+          fill={result.percentage * 100}
+          tintColor="#fff"
+          backgroundColor="#2E6FF3"
+          children={Inner}
+        /> */}
       </View>
       <View>
         <Text style={styles.heading1}>{result.total} | Total </Text>

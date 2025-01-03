@@ -1,110 +1,76 @@
-import {
-  Text,
-  View,
-  SafeAreaView,
-  ScrollView,
-  TouchableHighlight,
-} from "react-native";
-import { Button, FAB, IconButton } from "react-native-paper";
-import Eventcard from "./Components/EventCard";
-import MainInfoCard from "./Components/MainInfoCard";
-import { useEffect, useState } from "react";
-import { Link } from "expo-router";
+import React, { useState, useEffect } from "react";
+import { View, Text } from "react-native";
+import * as LocalAuthentication from "expo-local-authentication";
+import styles from "@/Styles/login.styles";
+import { Button, Icon } from "react-native-paper";
+import PINInput from "./Components/PINInput";
+import { useRouter } from "expo-router";
+import MaterialIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useSQLiteContext } from "expo-sqlite";
-import styles from "@/Styles/app.styles";
-import { dbUtils } from "@/database";
-import { type Expectation } from "@/Types/index.types";
-import Icon from "@expo/vector-icons/Ionicons";
 
-export default function Home() {
+const Login = () => {
+  const navigation = useRouter();
   const db = useSQLiteContext();
+  const [isCompatible, setIsCompatible] = useState<boolean>(false);
+  const [pinState, setPinState] = useState<string>("");
+  const [fingerPrintsEnrolled, setFingerPrintsEnrolled] =
+    useState<boolean>(false);
+  useEffect(() => {
+    checkDeviceForHardware();
+  }, []);
+  const checkDeviceForHardware = async () => {
+    let compatible = await LocalAuthentication.hasHardwareAsync();
+    setIsCompatible(compatible);
+    if (compatible) {
+      let fingerprints = await LocalAuthentication.isEnrolledAsync();
+      setFingerPrintsEnrolled(fingerprints);
+    }
+  };
 
-  const [expectations, setExpectations] = useState<Expectation[]>([]);
-  const [showArchives, setshowArchives] = useState<boolean>(false);
+  const scanFingerprint = async () => {
+    await LocalAuthentication.authenticateAsync().then((res) => {
+      if (res.success === true) {
+        navigation.replace("/Home");
+      }
+    });
+  };
 
-  async function fetchExpectations() {
-    try {
-      const data = await dbUtils.getAllExpectations(db);
-      setExpectations(data);
-      console.log(data);
-    } catch (error) {
-      console.log(error);
+  function checkPIN() {
+    if (pinState === "9715") {
+      navigation.replace("/Home");
     }
   }
-  useEffect(() => {
-    try {
-      console.log("Onme tghe Home poge");
-      fetchExpectations();
-    } catch (error) {
-      console.error("fetching fails");
-    }
-  }, []);
+  function setPIN(pin: string) {
+    setPinState(pin);
+  }
   return (
-    <View style={{ flex: 1, height: "100%" }}>
-      <ScrollView>
-        <SafeAreaView style={{ flex: 1 }}>
-          <View style={styles.container}>
-            <View style={styles.header}>
-              <Text style={{ ...styles.heading1 }}>Dashboard</Text>
-
-              <Link href="/CalendarView" asChild>
-                <IconButton icon="calendar" iconColor="#fff" />
-              </Link>
-            </View>
-            {/* <Button
-              onPress={() => {
-                dbUtils.cleartables(db);
-              }}
-            >
-              Clear tabkes
-            </Button> */}
-            <MainInfoCard />
-            <View style={styles.grid}>
-              <Text style={styles.heading1}>Upcoming events</Text>
-              <Text style={styles.caption2}>See all</Text>
-            </View>
-            {expectations.length > 0 ? (
-              expectations
-                ?.filter((expectation) => !expectation.result)
-                .map((expectation) => (
-                  <Eventcard
-                    key={expectation.id}
-                    data={expectation}
-                    pastEvent={false}
-                  />
-                ))
-            ) : (
-              <Text></Text>
-            )}
-            <View style={{ ...styles.grid, marginTop: 40 }}>
-              <Text style={styles.heading1}>Previous events</Text>
-              <TouchableHighlight
-                onPress={() => setshowArchives((prev) => !prev)}
-              >
-                <Text style={styles.caption2}>Archives</Text>
-              </TouchableHighlight>
-            </View>
-            {expectations.length > 0 &&
-              expectations
-                ?.filter((expectation) => !!expectation.result)
-                ?.filter(
-                  (expectation) =>
-                    Boolean(expectation.archived) === showArchives
-                )
-                .map((expectation) => (
-                  <Eventcard
-                    key={expectation.id}
-                    data={expectation}
-                    pastEvent={true}
-                  />
-                ))}
-          </View>
-        </SafeAreaView>
-      </ScrollView>
-
-      <Link href="/AddNewExpect" asChild>
-        <FAB icon="plus" color="#fff" style={styles.fab} onPress={() => {}} />
-      </Link>
+    <View style={styles.container}>
+      <View style={styles.avatarContainer}>
+        <MaterialIcons name="alarm-light" color="#fff" size={64} />
+      </View>
+      <Text style={styles.heading}>Welcome Naveenkumar</Text>
+      <PINInput length={4} onComplete={setPIN} />
+      <Button
+        mode="contained"
+        style={styles.secondaryButton}
+        labelStyle={styles.primaryButtonLabel}
+        onPress={checkPIN}
+      >
+        Login using PIN
+      </Button>
+      {isCompatible && fingerPrintsEnrolled && (
+        <Button
+          mode="contained"
+          style={styles.primaryButton}
+          labelStyle={styles.primaryButtonLabel}
+          onPress={scanFingerprint}
+          icon="fingerprint"
+        >
+          Scan fingerprint
+        </Button>
+      )}
     </View>
   );
-}
+};
+
+export default Login;

@@ -71,6 +71,7 @@ const AddNewExpect = () => {
 
   const updateTimestamp = (selectedDate: Date, selectedTime: Date): void => {
     // Combine date and time into a new Date object
+    console.log("selected Date is   ", selectedDate);
     const combinedDateTime = new Date(selectedDate);
     combinedDateTime.setHours(selectedTime.getHours());
     combinedDateTime.setMinutes(selectedTime.getMinutes());
@@ -83,6 +84,9 @@ const AddNewExpect = () => {
       return;
     }
     const currentTime: number = new Date().getTime();
+    console.log("Timstamp on save", moment(timestamp).format("DD/MM/YYYY"));
+    let x = timestamp ?? currentTime;
+    console.log("Timstamp on db", moment(x).format("DD/MM/YYYY"));
     dbUtils.addNewExpectation(db, {
       id: null,
       title: title,
