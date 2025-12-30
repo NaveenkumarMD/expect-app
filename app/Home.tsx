@@ -4,9 +4,8 @@ import {
   SafeAreaView,
   ScrollView,
   TouchableHighlight,
-  Alert,
 } from "react-native";
-import { Button, FAB, IconButton, Snackbar } from "react-native-paper";
+import { FAB, IconButton } from "react-native-paper";
 import Eventcard from "./Components/EventCard";
 import MainInfoCard from "./Components/MainInfoCard";
 import { useEffect, useState } from "react";
@@ -15,8 +14,7 @@ import { useSQLiteContext } from "expo-sqlite";
 import styles from "@/Styles/app.styles";
 import { dbUtils } from "@/database";
 import { type Expectation } from "@/Types/index.types";
-import * as FileSystem from "expo-file-system/legacy";
-import * as DocumentPicker from "expo-document-picker";
+import { downloadData, importData } from "@/utils";
 
 export default function Home() {
   const db = useSQLiteContext();
@@ -40,81 +38,16 @@ export default function Home() {
     }
   }, []);
 
-  const requestFileWritePermission = async () => {
-    const permissions =
-      await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
-
-    if (!permissions.granted) {
-      console.log("File write Permissions Denied!!");
-      return {
-        access: false,
-        directoryUri: null,
-      };
-    }
-    return {
-      access: true,
-      directoryUri: permissions.directoryUri,
-    };
-  };
-  async function downloadData() {
-    try {
-      const data = await dbUtils.getAllExpectations(db);
-      const jsonData = JSON.stringify(data, null, 2);
-
-      const reqPermissionResponse = await requestFileWritePermission();
-      if (
-        !reqPermissionResponse.access ||
-        !reqPermissionResponse.directoryUri
-      ) {
-        return Alert.alert("Permissions denied");
-      }
-
-      await FileSystem.StorageAccessFramework.createFileAsync(
-        reqPermissionResponse.directoryUri,
-        "Expectations.json",
-        "application/json"
-      )
-        .then(async (uri) => {
-          await FileSystem.writeAsStringAsync(uri, jsonData);
-        })
-        .then(() => {
-          Alert.alert("Success", "File Saved Successfully");
-        })
-        .catch((e) => {
-          Alert.alert("Error", `Could not save file: ${e.message}`);
-        });
-    } catch (error) {
-      Alert.alert("Error", `Could not Download file ${error?.message}`);
-    }
-  }
-  async function importData() {
-    try {
-      const res = await DocumentPicker.getDocumentAsync({
-        type: "application/json",
-      });
-
-      if (!res.assets) {
-        return Alert.alert("Error", "Please select a valid JSON file");
-      }
-
-      const uri = res.assets[0].uri;
-      const data = await FileSystem.readAsStringAsync(uri);
-      const parsedData = JSON.parse(data) as Expectation[];
-
-      await dbUtils.importData(db, parsedData);
-      await fetchExpectations(); // Refresh the list
-      Alert.alert("Success", "Data imported successfully");
-    } catch (error) {
-      Alert.alert("Error", `Could not import file: ${error.message}`);
-    }
-  }
   return (
     <View style={{ flex: 1, height: "100%" }}>
       <ScrollView>
         <SafeAreaView style={{ flex: 1 }}>
           <View style={styles.container}>
             <View style={styles.header}>
-              <Text style={{ ...styles.heading1 }} onLongPress={downloadData}>
+              <Text
+                style={{ ...styles.heading1 }}
+                onLongPress={() => downloadData(db)}
+              >
                 Dashboard
               </Text>
               <Link href="/CalendarView" asChild>
@@ -124,7 +57,10 @@ export default function Home() {
 
             <MainInfoCard />
             <View style={styles.grid}>
-              <Text onLongPress={importData} style={styles.heading1}>
+              <Text
+                onLongPress={() => importData(db, fetchExpectations)}
+                style={styles.heading1}
+              >
                 Upcoming events
               </Text>
               <TouchableHighlight

@@ -141,11 +141,23 @@ async function archiveExpectation(
   );
 }
 
-async function importData(db: SQLite.SQLiteDatabase, data: Expectation[]) {
+async function importData(
+  db: SQLite.SQLiteDatabase,
+  data: { expectations: Expectation[]; notes: Note[] }
+) {
   try {
+    // remove duplicate data
+    const uniqueExpectations = data.expectations.filter(
+      (item, index, self) =>
+        index === self.findIndex((t) => t.title === item.title)
+    );
+    const uniqueNotes = data.notes.filter(
+      (item, index, self) =>
+        index === self.findIndex((t) => t.notes === item.notes)
+    );
     // Start a transaction for bulk insert
     await db.withTransactionAsync(async () => {
-      for (const expectation of data) {
+      for (const expectation of uniqueExpectations) {
         await db.runAsync(
           `INSERT INTO expectations (
             title,
@@ -166,6 +178,24 @@ async function importData(db: SQLite.SQLiteDatabase, data: Expectation[]) {
             expectation.isDisappointed || false,
             expectation.resultPercentage || null,
             expectation.archived || false,
+          ]
+        );
+      }
+      for (const note of uniqueNotes) {
+        await db.runAsync(
+          `INSERT INTO secretNotes (
+            category,
+            notes,
+            isDone,
+            createdAt,
+            updatedAt
+          ) VALUES (?, ?, ?, ?, ?)`,
+          [
+            note.category,
+            note.notes,
+            note.isDone || false,
+            note.createdAt || null,
+            note.updatedAt || null,
           ]
         );
       }
