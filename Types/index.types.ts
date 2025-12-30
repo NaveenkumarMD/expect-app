@@ -10,4 +10,13 @@ interface Expectation {
   archived?: boolean;
 }
 
-export { Expectation };
+interface Note {
+  id: number | null;
+  category: string;
+  notes: string;
+  isDone?: boolean;
+  createdAt?: number;
+  updatedAt?: number;
+}
+
+export { Expectation, Note };

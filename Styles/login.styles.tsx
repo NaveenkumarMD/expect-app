@@ -6,7 +6,7 @@ const styles = StyleSheet.create({
     marginBottom: 32,
     width: 120,
     height: 120,
-    borderRadius: "50%",
+    borderRadius: "20%",
     backgroundColor: "#2E6FF3",
     textAlign: "center",
     alignSelf: "center",

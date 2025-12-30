@@ -9,6 +9,26 @@ const styles = StyleSheet.create({
     borderRadius: 50, // Use a number for border radius, not a string
     backgroundColor: "#2E6FF3",
   },
+  primaryButton: {
+    backgroundColor: "#2E6FF3",
+    borderRadius: 8,
+    height: 56,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 16,
+  },
+  primaryButtonLabel: {
+    color: "white",
+    fontSize: 16,
+  },
+  notes: {
+    position: "absolute",
+    margin: 24,
+    right: 80,
+    bottom: 0,
+    borderRadius: 50, // Use a number for border radius, not a string
+    backgroundColor: "#2E6FF3",
+  },
   header: {
     display: "flex",
     flexDirection: "row",
@@ -24,11 +44,48 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     paddingRight: 20,
   },
+  input: {
+    borderWidth: 2,
+    backgroundColor: "#333D4D",
+    borderColor: "#333D4D",
+    borderRadius: 8,
+    color: "white",
+    height: 56,
+    fontSize: 16,
+    paddingLeft: 16,
+  },
+  inputnotes: {
+    borderWidth: 2,
+    backgroundColor: "#333D4D",
+    borderColor: "#333D4D",
+    borderRadius: 8,
+    color: "white",
+    minHeight: 100,
+    fontSize: 16,
+    paddingLeft: 16,
+  },
+  notelistItem: {
+    backgroundColor: "#333D4D",
+    padding: 16,
+  },
   heading1: {
     fontSize: 18,
     fontFamily: '"Open Sans", sans-serif',
     color: "#fff",
     fontWeight: "800",
+  },
+  heading11: {
+    fontSize: 20,
+    fontFamily: '"Open Sans", sans-serif',
+    color: "#fff",
+    fontWeight: "800",
+  },
+  text1: {
+    color: "#F1F4F6",
+    fontSize: 14,
+    fontWeight: "semibold",
+    fontFamily: '"Open Sans", sans-serif',
+    padding: 2,
   },
   grid: {
     flexDirection: "row",

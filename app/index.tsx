@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text } from "react-native";
+import { View, Text, Image } from "react-native";
 import * as LocalAuthentication from "expo-local-authentication";
 import styles from "@/Styles/login.styles";
 import { Button, Icon } from "react-native-paper";
@@ -46,7 +46,10 @@ const Login = () => {
   return (
     <View style={styles.container}>
       <View style={styles.avatarContainer}>
-        <MaterialIcons name="alarm-light" color="#fff" size={64} />
+        <Image
+          source={require("../assets/images/adaptive-icon.png")}
+          style={{ width: 120, height: 120, borderRadius: 60 }}
+        />
       </View>
       <Text style={styles.heading}>Welcome Naveenkumar</Text>
       <PINInput length={4} onComplete={setPIN} />

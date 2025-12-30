@@ -15,7 +15,7 @@ import { useSQLiteContext } from "expo-sqlite";
 import styles from "@/Styles/app.styles";
 import { dbUtils } from "@/database";
 import { type Expectation } from "@/Types/index.types";
-import * as FileSystem from "expo-file-system";
+import * as FileSystem from "expo-file-system/legacy";
 import * as DocumentPicker from "expo-document-picker";
 
 export default function Home() {
@@ -39,10 +39,11 @@ export default function Home() {
       console.error("fetching fails");
     }
   }, []);
+
   const requestFileWritePermission = async () => {
     const permissions =
       await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
-    console.log(permissions.granted);
+
     if (!permissions.granted) {
       console.log("File write Permissions Denied!!");
       return {
@@ -183,6 +184,9 @@ export default function Home() {
 
       <Link href="/AddNewExpect" asChild>
         <FAB icon="plus" color="#fff" style={styles.fab} onPress={() => {}} />
+      </Link>
+      <Link href="/SecretNotes" asChild>
+        <FAB icon="note" color="#fff" style={styles.notes} onPress={() => {}} />
       </Link>
     </View>
   );

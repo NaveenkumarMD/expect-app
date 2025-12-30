@@ -26,7 +26,7 @@ export default function RootLayout() {
               contentStyle: {
                 backgroundColor: "#232528",
               },
-              animation: "fade",
+              animation: "slide_from_bottom",
               animationDuration: 200,
               presentation: "modal",
               cardOverlayEnabled: true,

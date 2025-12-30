@@ -27,6 +27,7 @@ const UpdateExpectation = () => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [unExpected, setUnExpected] = useState("");
   const [pastEvent, setPastEvent] = useState<boolean>(false);
+
   async function fetchData() {
     const data = (await dbUtils.getExpectationWithId(
       db,
@@ -48,10 +49,11 @@ const UpdateExpectation = () => {
 
     setOptions(options);
   }
+  
   useEffect(() => {
     fetchData();
   }, []);
-  console.log(expectation);
+
   async function archiveExpectation() {
     try {
       if (!expectation) {
